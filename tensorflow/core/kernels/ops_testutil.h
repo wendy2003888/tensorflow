@@ -140,14 +140,13 @@ class OpsTestBase : public ::testing::Test {
     CHECK_GT(input_types_.size(), inputs_.size())
         << "Adding more inputs than types; perhaps you need to call MakeOp";
     ResourceMgr* rm = device_->resource_manager();
-    EXPECT_TRUE(
-        rm->Create(container == "" ? rm->default_container() : container, name,
-                   resource)
-            .ok());
+    const string resource_container =
+        container == "" ? rm->default_container() : container;
+    EXPECT_TRUE(rm->Create(resource_container, name, resource).ok());
     TypeIndex type_index = MakeTypeIndex<T>();
     ResourceHandle handle;
     handle.set_device(device_->name());
-    handle.set_container(container);
+    handle.set_container(resource_container);
     handle.set_name(name);
     handle.set_hash_code(type_index.hash_code());
     handle.set_maybe_type_name(type_index.name());
